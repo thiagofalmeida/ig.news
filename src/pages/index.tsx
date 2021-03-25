@@ -4,12 +4,18 @@ export default function Home() {
   return (
     <>
       <Head>
-        <title>Início | IG.news</title>
+        <title>Início | ig.news</title>
       </Head>
 
-      <h1>
-        oi
-      </h1>
+      <main>
+        <section>
+          <span>Hey, welcome</span>
+          <h1>News about the <span>React</span> world.</h1>
+          <p>
+            Get access to all the news
+          </p>
+        </section>
+      </main>
     </>
   )
 }
