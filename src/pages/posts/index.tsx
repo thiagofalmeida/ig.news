@@ -1,12 +1,24 @@
 import Head from 'next/head';
 import { GetStaticProps } from 'next';
 import Prismic from '@prismicio/client'
+import { RichText } from 'prismic-dom'
 
 import { getPrismicClient } from '../../services/prismic';
 
 import styles from './styles.module.scss'
 
-export default function Posts() {
+type Post = {
+  slug: string
+  title: string
+  excerpt: string
+  updatedAt: string
+}
+
+interface PostProps {
+  posts: Post[]
+}
+
+export default function Posts({ posts }: PostProps) {
   return  (
     <>
       <Head>
@@ -15,21 +27,13 @@ export default function Posts() {
 
       <main className={styles.container}>
         <div className={styles.posts}>
-          <a href="#">
-            <time>24 de abril de 2021</time>
-            <strong>Next.JS - Novidades na versão 10 e atualização do blog para melhorar a performance</strong>
-            <p>Para mais detalhes, veja o commit. Com isso, agora as imagens serão convertidas para o formato webP, seu tamanho será diminuído sem perder a qualidade e passarão a ser cacheadas automaticamente. Serão carregadas em tela assim que estiverem próximas de aparecer em tela, ou seja, só se for realmente visualizada. Isso é um benefício na performance do projeto, confira abaixo:</p>
-          </a>
-          <a href="#">
-            <time>24 de abril de 2021</time>
-            <strong>Next.JS - Novidades na versão 10 e atualização do blog para melhorar a performance</strong>
-            <p>Para mais detalhes, veja o commit. Com isso, agora as imagens serão convertidas para o formato webP, seu tamanho será diminuído sem perder a qualidade e passarão a ser cacheadas automaticamente. Serão carregadas em tela assim que estiverem próximas de aparecer em tela, ou seja, só se for realmente visualizada. Isso é um benefício na performance do projeto, confira abaixo:</p>
-          </a>
-          <a href="#">
-            <time>24 de abril de 2021</time>
-            <strong>Next.JS - Novidades na versão 10 e atualização do blog para melhorar a performance</strong>
-            <p>Para mais detalhes, veja o commit. Com isso, agora as imagens serão convertidas para o formato webP, seu tamanho será diminuído sem perder a qualidade e passarão a ser cacheadas automaticamente. Serão carregadas em tela assim que estiverem próximas de aparecer em tela, ou seja, só se for realmente visualizada. Isso é um benefício na performance do projeto, confira abaixo:</p>
-          </a>
+          { posts.map(post => (
+            <a key={post.slug} href="#">
+              <time>{post.updatedAt}</time>
+              <strong>{post.title}</strong>
+              <p>{post.excerpt}</p>
+            </a>          
+          ))}
         </div>
       </main>
     </>
@@ -46,9 +50,22 @@ export const getStaticProps: GetStaticProps = async () => {
     pageSize: 100,
   })
 
+  const posts = response.results.map(post => {
+    return {
+      slug: post.uid,
+      title: RichText.asText(post.data.title),
+      excerpt: post.data.content.find(content => content.type === 'paragraph')?.text ?? '',
+      updatedAt: new Date(post.last_publication_date).toLocaleDateString('pt-BR', {
+        day: '2-digit',
+        month: 'long',
+        year: 'numeric'
+      })
+    }
+  })
+
   return {
     props: {
-
+      posts
     }
   }
 }
