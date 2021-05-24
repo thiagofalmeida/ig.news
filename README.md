@@ -28,6 +28,7 @@ $ yarn dev
 - <a href="https://sass-lang.com"> SASS </a>
 - <a href="https://stripe.com/br"> Stripe </a>
 - <a href="https://fauna.com"> FaunaDB </a>
+- <a href="https://jestjs.io/pt-BR/"> Jest </a>
 
 ---
 
